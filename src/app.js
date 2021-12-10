@@ -33,7 +33,10 @@ class App {
       const data = [location, weather];
 
       state = this._createStateObject(data);
+
       this._renderData(state);
+      this._renderDailyCards(state);
+      this._renderHourlyCards(state);
     } catch (err) {
       console.error(err);
     }
@@ -49,6 +52,13 @@ class App {
 
   _createStateObject(data) {
     const [location, weather] = data;
+    const hours = weather.hourly.map(hour => {
+      return {
+        dt: hour.dt,
+        temp: hour.temp,
+        icon: hour.weather[0].icon,
+      };
+    });
     const days = weather.daily.map(day => {
       return {
         dt: day.dt,
@@ -74,6 +84,7 @@ class App {
         id: weather.current.weather[0].id,
         main: weather.current.weather[0].main,
       },
+      hourly: hours,
       daily: days,
     };
   }
@@ -111,7 +122,16 @@ class App {
         </div>
       </div>
 
-      <div class="daily-cards">
+      
+    `;
+
+    this._loaderEl.innerHTML = '';
+    this._cardsEl.insertAdjacentHTML('afterbegin', currentHTML);
+  }
+
+  _renderDailyCards(state) {
+    const markup = `
+      <div class="daily-cards hidden">
         ${state.daily
           .slice(1)
           .map(day => this._generateDailyHTML(day))
@@ -119,8 +139,38 @@ class App {
       </div>
     `;
 
-    this._loaderEl.innerHTML = '';
-    this._cardsEl.insertAdjacentHTML('afterbegin', currentHTML);
+    this._cardsEl.insertAdjacentHTML('afterend', markup);
+  }
+
+  _renderHourlyCards(state) {
+    const markup = `
+      <div class="hourly-cards hidden">
+      ${state.hourly
+        .slice(1, 25)
+        .map(hour => this._generateHourlyHTML(hour))
+        .join('')}
+      </div>
+    `;
+
+    this._cardsEl.insertAdjacentHTML('afterend', markup);
+  }
+
+  _generateHourlyHTML(hour) {
+    const now = new Date(hour.dt * 1000);
+
+    return `
+      <div class="hourly-card">
+        <div class="hour item">
+          <p>${this._getFutureHour(now)}:00</p>
+        </div>
+        <div class="img item">
+          <img src="${API_IMG_URL}${hour.icon}.png" alt="icon" />
+        </div>
+        <div class="temp item">
+          <p>${hour.temp.toFixed(1)}°C</p>
+        </div>
+      </div>
+    `;
   }
 
   _generateDailyHTML(day) {
@@ -164,7 +214,7 @@ class App {
 
     return {
       date: `${date < 10 ? '0' + date : date}.${month < 10 ? '0' + month : month}.${year}`,
-      time: `${hour}:${minutes < 10 ? '0' + minutes : minutes}:${
+      time: `${hour < 10 ? '0' + hour : hour}:${minutes < 10 ? '0' + minutes : minutes}:${
         seconds < 10 ? '0' + seconds : seconds
       }`,
       day: days[day],
@@ -176,6 +226,11 @@ class App {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     return days[day];
+  }
+
+  _getFutureHour(date) {
+    const hour = date.getHours();
+    return hour < 10 ? `0${hour}` : hour;
   }
 
   _renderSpinner(parentEl) {
