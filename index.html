@@ -9,7 +9,14 @@
   </head>
   <body>
     <div class="main-container">
-      <button class="btn hidden" id="localBtn">Get current location</button>
+      <div class="initial">
+        <button class="btn" id="local-btn">Get current location</button>
+        <p>or</p>
+        <form id="form" class="item">
+          <input type="text" name="Search" id="search-box" placeholder="Search for a location..." />
+          <!-- <button id="go">Go!</button> -->
+        </form>
+      </div>
       <div class="cards">
         <div class="loader"></div>
         <!-- <div class="main-card">
@@ -38,8 +45,8 @@
           </div>
         </div> -->
 
-        <div class="buttons">
-          <button class="btn" href="#nav" id="daily-btn">Daily Cards</button>
+        <div class="buttons hidden">
+          <button class="btn" id="daily-btn">Daily Cards</button>
           <button class="btn" id="hourly-btn">Hourly Cards</button>
         </div>
       </div>
@@ -64,5 +71,6 @@
       </div> -->
     </div>
   </body>
+  <script defer src="https://cdn.jsdelivr.net/npm/luxon@2.2.0/build/global/luxon.min.js"></script>
   <script defer src="./src/controller.js" type="module"></script>
 </html>

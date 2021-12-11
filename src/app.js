@@ -1,10 +1,23 @@
-import { API_WEATHER_URL, API_LOCATION_URL, KEY, LAT, LON, UNITS, API_IMG_URL } from './config.js';
+import {
+  API_WEATHER_URL,
+  API_GEOREV_URL,
+  API_GEOFOR_URL,
+  WEATHER_KEY,
+  GEO_KEY,
+  UNITS,
+  API_IMG_URL,
+} from './config.js';
 
 export let state = {};
 
 class App {
+  // _locale = navigator.language;
+  _locale = 'en-GB';
+
   _loaderEl = document.querySelector('.loader');
   _cardsEl = document.querySelector('.cards');
+  _initialEl = document.querySelector('.initial');
+  _buttonsEl = document.querySelector('.buttons');
 
   async _getData(url) {
     try {
@@ -16,42 +29,60 @@ class App {
     }
   }
 
-  async _setData(position) {
+  async _getLocalData(position) {
     try {
+      this._renderSpinner(this._loaderEl);
+
       const { latitude } = position.coords;
       const { longitude } = position.coords;
 
-      this._renderSpinner(this._loaderEl);
-
-      const location = await this._getData(
-        `${API_LOCATION_URL}?lat=${latitude}&lon=${longitude}&appid=${KEY}`
-      );
-      const weather = await this._getData(
-        `${API_WEATHER_URL}?lat=${latitude}&lon=${longitude}&units=${UNITS}&appid=${KEY}`
-      );
-
-      const data = [location, weather];
-
-      state = this._createStateObject(data);
-
-      this._renderData(state);
-      this._renderDailyCards(state);
-      this._renderHourlyCards(state);
+      this._setData(latitude, longitude);
     } catch (err) {
       console.error(err);
     }
   }
 
+  async _getSearchData(location) {
+    try {
+      this._renderSpinner(this._loaderEl);
+
+      const loc = await this._getData(`${API_GEOFOR_URL}?q=${location}&key=${GEO_KEY}`);
+      const latitude = loc.results[0].geometry.lat;
+      const longitude = loc.results[0].geometry.lng;
+
+      this._setData(latitude, longitude);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async _setData(latitude, longitude) {
+    const location = await this._getData(
+      `${API_GEOREV_URL}?lat=${latitude}&lon=${longitude}&appid=${WEATHER_KEY}`
+    );
+    const weather = await this._getData(
+      `${API_WEATHER_URL}?lat=${latitude}&lon=${longitude}&units=${UNITS}&appid=${WEATHER_KEY}`
+    );
+
+    const data = [location, weather];
+    console.log(data);
+
+    state = this._createStateObject(data);
+
+    this._renderData(state);
+  }
+
   _getPosition() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(this._setData.bind(this), () => {
-        alert('Could not get your position');
+      navigator.geolocation.getCurrentPosition(this._getLocalData.bind(this), () => {
+        alert('Could not get your position :(');
       });
     }
   }
 
   _createStateObject(data) {
     const [location, weather] = data;
+
     const hours = weather.hourly.map(hour => {
       return {
         dt: hour.dt,
@@ -59,6 +90,7 @@ class App {
         icon: hour.weather[0].icon,
       };
     });
+
     const days = weather.daily.map(day => {
       return {
         dt: day.dt,
@@ -70,10 +102,11 @@ class App {
         main: day.weather[0].main,
       };
     });
+
     return {
       name: location[0].name,
       current: {
-        dateAndTime: this._getCurrentDateAndTime(),
+        dateAndTime: this._getCurrentDateAndTime(weather.timezone),
         temp: weather.current.temp,
         feelsLike: weather.current.feels_like,
         humidity: weather.current.humidity,
@@ -89,7 +122,7 @@ class App {
     };
   }
 
-  _renderData(state) {
+  _renderMainCard(state) {
     const currentHTML = `
       <div class="main-card">
         <div class="local-time item">
@@ -121,8 +154,6 @@ class App {
           <p id="current-date">${state.current.dateAndTime.date}</p>
         </div>
       </div>
-
-      
     `;
 
     this._loaderEl.innerHTML = '';
@@ -143,6 +174,32 @@ class App {
   }
 
   _renderHourlyCards(state) {
+    // const now = new Date();
+    // const curHour = +now
+    //   .toLocaleString(this._locale, {
+    //     timeZone: state.current.dateAndTime.timeZone,
+    //   })
+    //   .split(',')
+    //   .pop()
+    //   .split(':')
+    //   .shift();
+
+    const mapped = state.hourly.map(hour =>
+      Number(
+        new Date(hour.dt * 1000)
+          .toLocaleString(this._locale, {
+            timeZone: state.current.dateAndTime.timeZone,
+          })
+          .split(',')
+          .pop()
+          .split(':')
+          .shift()
+          .trim()
+      )
+    );
+    console.log(mapped);
+    // const index = mapped.indexOf(curHour);
+
     const markup = `
       <div class="hourly-cards hidden">
       ${state.hourly
@@ -155,8 +212,16 @@ class App {
     this._cardsEl.insertAdjacentHTML('afterend', markup);
   }
 
+  _renderData(state) {
+    this._renderMainCard(state);
+    this._renderDailyCards(state);
+    this._renderHourlyCards(state);
+  }
+
   _generateHourlyHTML(hour) {
-    const now = new Date(hour.dt * 1000);
+    const now = new Date(hour.dt * 1000).toLocaleString(this._locale, {
+      timeZone: state.current.dateAndTime.timeZone,
+    });
 
     return `
       <div class="hourly-card">
@@ -200,24 +265,28 @@ class App {
     `;
   }
 
-  _getCurrentDateAndTime() {
+  _getCurrentDateAndTime(timeZone) {
     const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const date = now.getDate();
-    const day = now.getDay();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
 
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const options = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    };
+
+    const dateObj = now.toLocaleString(this._locale, options);
+    const timeObj = now.toLocaleString(this._locale, { timeZone });
+
+    const day = dateObj.split(',').shift().trim();
+    const date = dateObj.split(',').pop().trim();
+    const time = timeObj.split(',').pop().trim();
 
     return {
-      date: `${date < 10 ? '0' + date : date}.${month < 10 ? '0' + month : month}.${year}`,
-      time: `${hour < 10 ? '0' + hour : hour}:${minutes < 10 ? '0' + minutes : minutes}:${
-        seconds < 10 ? '0' + seconds : seconds
-      }`,
-      day: days[day],
+      timeZone,
+      date,
+      day,
+      time,
     };
   }
 
@@ -229,8 +298,10 @@ class App {
   }
 
   _getFutureHour(date) {
-    const hour = date.getHours();
-    return hour < 10 ? `0${hour}` : hour;
+    console.log(date);
+    // const hour = date.getHours();
+    const hour = date.split(',').pop().split(':').shift().trim();
+    return hour;
   }
 
   _renderSpinner(parentEl) {
@@ -241,8 +312,16 @@ class App {
     parentEl.insertAdjacentHTML('afterbegin', markup);
   }
 
-  init() {
+  initLocal() {
+    this._initialEl.classList.add('hidden');
+    this._buttonsEl.classList.remove('hidden');
     this._getPosition();
+  }
+
+  initSearch(location) {
+    this._initialEl.classList.add('hidden');
+    this._buttonsEl.classList.remove('hidden');
+    this._getSearchData(location);
   }
 }
 

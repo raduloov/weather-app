@@ -1,16 +1,25 @@
 import app from './app.js';
 import { state } from './app.js';
 
-const localBtn = document.getElementById('localBtn');
+const localBtn = document.getElementById('local-btn');
 const buttons = document.querySelectorAll('.btn');
+const form = document.getElementById('form');
+const search = document.getElementById('search-box');
 
-localBtn.addEventListener('click', app._getPosition.bind(app));
+localBtn.addEventListener('click', app.initLocal.bind(app));
+form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const searchTerm = search.value;
+  app.initSearch(searchTerm);
+});
+
 setInterval(() => {
-  state.current.dateAndTime = app._getCurrentDateAndTime();
+  state.current.dateAndTime = app._getCurrentDateAndTime(state.current.dateAndTime.timeZone);
   const time = document.getElementById('local-time');
   time.textContent = state.current.dateAndTime.time;
 }, 1000);
-app._getPosition();
+// app._getPosition();
 
 buttons.forEach(button => {
   button.addEventListener('click', () => {
@@ -36,3 +45,8 @@ function toggleCards(button) {
     hourlyCards.classList.toggle('hidden');
   }
 }
+
+const date = new Date();
+console.log(date);
+const usaTime = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
+console.log(usaTime);
