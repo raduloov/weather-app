@@ -29,12 +29,12 @@ class App {
     }
   }
 
-  async _getLocalData(position) {
+  async _getLocalData(location) {
     try {
       this._renderSpinner(this._loaderEl);
 
-      const { latitude } = position.coords;
-      const { longitude } = position.coords;
+      const { latitude } = location.coords;
+      const { longitude } = location.coords;
 
       this._setData(latitude, longitude);
     } catch (err) {
@@ -46,9 +46,10 @@ class App {
     try {
       this._renderSpinner(this._loaderEl);
 
-      const loc = await this._getData(`${API_GEOFOR_URL}?q=${location}&key=${GEO_KEY}`);
-      const latitude = loc.results[0].geometry.lat;
-      const longitude = loc.results[0].geometry.lng;
+      const data = await this._getData(`${API_GEOFOR_URL}?q=${location}&key=${GEO_KEY}`);
+
+      const latitude = data.results[0].geometry.lat;
+      const longitude = data.results[0].geometry.lng;
 
       this._setData(latitude, longitude);
     } catch (err) {
@@ -173,16 +174,6 @@ class App {
   }
 
   _renderHourlyCards(state) {
-    // const now = new Date();
-    // const curHour = +now
-    //   .toLocaleString(this._locale, {
-    //     timeZone: state.current.dateAndTime.timeZone,
-    //   })
-    //   .split(',')
-    //   .pop()
-    //   .split(':')
-    //   .shift();
-
     const mapped = state.hourly.map(hour =>
       Number(
         new Date(hour.dt * 1000)
@@ -196,8 +187,6 @@ class App {
           .trim()
       )
     );
-    console.log(mapped);
-    // const index = mapped.indexOf(curHour);
 
     const markup = `
       <div class="hourly-cards hidden">
@@ -297,8 +286,6 @@ class App {
   }
 
   _getFutureHour(date) {
-    console.log(date);
-    // const hour = date.getHours();
     const hour = date.split(',').pop().split(':').shift().trim();
     return hour;
   }

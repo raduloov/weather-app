@@ -44,8 +44,3 @@ function toggleCards(button) {
     hourlyCards.classList.toggle('hidden');
   }
 }
-
-const date = new Date();
-console.log(date);
-const usaTime = date.toLocaleString('en-US', { timeZone: 'America/New_York' });
-console.log(usaTime);
