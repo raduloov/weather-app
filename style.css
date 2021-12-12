@@ -406,7 +406,7 @@ textarea {
 /* Responsiveness */
 @media (max-width: 1750px) {
   body {
-    height: 200vh;
+    height: 150vh;
   }
 
   .main-container {
@@ -417,7 +417,7 @@ textarea {
 
 @media (max-width: 450px) {
   body {
-    height: 130vh;
+    height: 180vh;
   }
 
   .main-container {
