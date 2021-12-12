@@ -493,10 +493,7 @@ textarea {
   }
 
   .img-temp {
-    grid-area: 2 / 1 / 3 / 3;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 2fr 1fr;
+    position: relative;
   }
 
   .current-img {
@@ -504,7 +501,9 @@ textarea {
   }
 
   .current-img img {
-    height: 60%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   #temp {
