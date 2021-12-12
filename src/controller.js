@@ -19,7 +19,6 @@ setInterval(() => {
   const time = document.getElementById('local-time');
   time.textContent = state.current.dateAndTime.time;
 }, 1000);
-// app._getPosition();
 
 buttons.forEach(button => {
   button.addEventListener('click', () => {

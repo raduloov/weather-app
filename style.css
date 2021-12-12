@@ -42,6 +42,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  /* padding: 20px; */
 }
 
 #local-btn {
@@ -52,30 +53,10 @@ body {
   height: 5rem;
   width: 30rem;
   padding: 5px;
-  margin: 20px 0 20px 0;
 }
 
 .initial p {
   font-size: 2rem;
-}
-
-form {
-  flex-direction: column;
-}
-
-form button {
-  background-color: rgba(254, 254, 254, 0.25);
-  font-family: inherit;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 15px;
-  width: 35%;
-  height: 30px;
-  cursor: pointer;
-}
-
-form button:hover {
-  background-color: rgba(254, 254, 254, 0.5);
 }
 
 #search-box,
@@ -89,7 +70,6 @@ textarea {
   border: none;
   border-radius: 15px;
   outline: none;
-  margin: 20px;
   padding: 10px;
 }
 
@@ -116,7 +96,6 @@ textarea {
   flex-direction: column;
   margin-left: 20px;
   width: 25%;
-  /* border: 1px solid #000; */
 }
 
 #location-name {
@@ -139,7 +118,6 @@ textarea {
   flex-direction: column;
   margin-right: 20px;
   width: 25%;
-  /* border: 1px solid #000; */
 }
 
 #current-day {
@@ -247,25 +225,31 @@ textarea {
 }
 
 .daily-cards {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-column-gap: 5px;
+  /* display: grid; */
+  /* grid-template-columns: repeat(7, 1fr); */
+  /* grid-column-gap: 5px; */
+  display: flex;
+  /* justify-content: space-evenly; */
   padding-top: 30px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   background-color: rgba(255, 255, 255, 0);
   box-shadow: 0px 19px 24px 3px rgba(0, 0, 0, 0.37);
+  overflow: auto;
+  white-space: nowrap;
   transform: translateY(-5%);
   animation: slide-down 1s;
 }
 
 .daily-card {
+  width: 100%;
+  margin: 0 2px 0 2px;
+  padding: 0 10px 0 10px;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 2fr 0.5fr repeat(2, 1fr);
   background-color: rgba(255, 255, 255, 0.25);
   border-radius: 15px;
-  /* max-width: 10rem; */
 }
 
 .day {
@@ -299,6 +283,8 @@ textarea {
   border-bottom-right-radius: 15px;
   background-color: rgba(255, 255, 255, 0);
   box-shadow: 0px 19px 24px 3px rgba(0, 0, 0, 0.37);
+  overflow: auto;
+  white-space: nowrap;
   transform: translateY(-5%);
   animation: slide-down 1s;
 }
@@ -320,6 +306,7 @@ textarea {
   grid-template-rows: 1fr 1fr 1fr;
   background-color: rgba(255, 255, 255, 0.25);
   border-radius: 15px;
+  padding: 0 5px 0 5px;
 }
 
 .hour {
@@ -418,103 +405,130 @@ textarea {
 }
 
 /* Responsiveness */
-@media (max-width: 1400px) {
+@media (max-width: 1750px) {
   body {
-    height: 120vh;
+    height: 150vh;
   }
 
   .main-container {
     height: 450px;
-    margin-top: 20px;
-  }
-
-  .daily-cards {
-    overflow: hidden;
-    width: 100%;
-  }
-
-  .daily-card {
-    width: 150px;
+    margin-top: 10px;
   }
 }
 
-/* @media (max-width: 400px) {
-  .main-container {
-    height: 300px;
-    margin-top: 10px;
+@media (max-width: 450px) {
+  body {
+    height: 130vh;
   }
 
-  .cards {
-    height: 100%;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 3fr 0.5fr;
+  .main-container {
+    height: 480px;
+    width: 90%;
+  }
+
+  .initial {
+    flex-direction: column;
+  }
+
+  #local-btn {
+    font-size: 1.5rem;
+    height: 6rem;
+    width: 15rem;
+    padding: 5px;
+  }
+
+  #search-box,
+  textarea {
+    font-size: 1.3rem;
+    height: 6rem;
+    width: 15rem;
+    padding: 5px;
+  }
+
+  .main-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .local-time {
+    flex-direction: column;
+    margin-left: 10px;
+    width: 25%;
+    display: none;
   }
 
   #location-name {
-    font-size: 1rem;
+    font-size: 2rem;
   }
 
   #local-time {
-    font-size: 1rem;
+    font-size: 1.5rem;
   }
 
   .current {
     width: 100%;
-    height: 30px;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 1fr 2fr 1fr;
-    border: 1px solid black;
+    height: 100%;
   }
 
   .current-date {
     flex-direction: column;
-    margin-right: 0;
+    margin-right: 20px;
     width: 25%;
+    display: none;
   }
 
   #current-day {
-    font-size: 1rem;
+    font-size: 3rem;
   }
 
   #current-date {
-    font-size: 1rem;
+    font-size: 2.3rem;
   }
 
   #description {
-    font-size: 1rem;
+    grid-area: 1 / 1 / 2 / 3;
+    font-size: 1.6rem;
+  }
+
+  .img-temp {
+    grid-area: 2 / 1 / 3 / 3;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 2fr 1fr;
+  }
+
+  .current-img {
+    grid-area: 1 / 1 / 3 / 2;
+  }
+
+  .current-img img {
+    height: 60%;
   }
 
   #temp {
-    font-size: 1rem;
+    font-size: 4.5rem;
   }
 
-  #feels-like {
-    grid-area: 2 / 2 / 3 / 3;
-    font-size: 1rem;
+  #humidity {
+    font-size: 1.3rem;
   }
 
-  #feels-like span {
-    font-size: 1rem;
+  #wind {
+    font-size: 1.3rem;
   }
 
-  .daily-cards {
-    grid-column-gap: 5px;
-    padding-top: 30px;
-    overflow: hidden;
+  .buttons {
     width: 100%;
   }
 
-  .img-temp img {
-    height: 100px;
-    width: 100px;
+  .btn {
+    font-size: 1.5rem;
+    padding: 5px;
   }
 
-  .daily-card {
-    width: 150px;
+  .hourly-card {
+    height: 130px;
   }
-} */
+}

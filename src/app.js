@@ -65,7 +65,6 @@ class App {
     );
 
     const data = [location, weather];
-    console.log(data);
 
     state = this._createStateObject(data);
 
