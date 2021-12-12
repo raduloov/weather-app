@@ -33,8 +33,8 @@ class App {
     try {
       this._renderSpinner(this._loaderEl);
 
-      const latitude = location.coords.latitude.toFixed(3);
-      const longitude = location.coords.longitude.toFixed(3);
+      const { latitude } = location.coords;
+      const { longitude } = location.coords;
 
       this._setData(latitude, longitude);
     } catch (err) {

@@ -79,7 +79,7 @@ textarea {
 
 #search-box:focus,
 #search-box:hover {
-  background-color: var(--primary-color);
+  background-color: var(--primary-color-focus);
 }
 
 .cards {
