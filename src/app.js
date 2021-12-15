@@ -125,6 +125,7 @@ class App {
   _renderMainCard(state) {
     const currentHTML = `
       <div class="main-card">
+      <button id="back-btn">Back</button>
         <div class="local-time item">
           <p id="location-name">${state.name}</p>
           <p id="local-time">${state.current.dateAndTime.time}</p>
@@ -158,6 +159,11 @@ class App {
 
     this._loaderEl.innerHTML = '';
     this._cardsEl.insertAdjacentHTML('afterbegin', currentHTML);
+
+    const backBtn = document.getElementById('back-btn');
+    backBtn.addEventListener('click', () => {
+      location.reload();
+    });
   }
 
   _renderDailyCards(state) {

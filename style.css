@@ -94,12 +94,32 @@ textarea {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .local-time {
   flex-direction: column;
   margin-left: 20px;
   width: 25%;
+}
+
+#back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 10px;
+  border: none;
+  border-radius: 15px;
+  font-family: inherit;
+  font-size: 1.2rem;
+  width: 5rem;
+  height: 3rem;
+  background-color: var(--primary-color);
+  cursor: pointer;
+}
+
+#back-btn:hover {
+  background-color: var(--primary-color-focus);
 }
 
 #location-name {
@@ -249,6 +269,7 @@ textarea {
   grid-template-rows: 1fr 2fr 0.5fr repeat(2, 1fr);
   background-color: var(--primary-color);
   border-radius: 15px;
+  flex: 1;
 }
 
 .day {

@@ -44,3 +44,7 @@ function toggleCards(button) {
     hourlyCards.classList.toggle('hidden');
   }
 }
+
+function back() {
+  location.reload();
+}
