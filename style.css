@@ -115,6 +115,7 @@ textarea {
   width: 5rem;
   height: 3rem;
   background-color: var(--primary-color);
+  color: #363636;
   cursor: pointer;
 }
 
